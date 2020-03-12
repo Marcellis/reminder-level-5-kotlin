@@ -7,15 +7,6 @@ import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-@Entity(tableName="reminderTable")
 data class Reminder(
-
-    @ColumnInfo(name="Reminder")
-    val reminderText: String,
-
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    var id: Int? = null
-
-
+    val reminderText: String
 ) : Parcelable
