@@ -1,12 +1,12 @@
-package nl.hva.level4example.adapter
+package nl.hva.level5example.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.reminder_item.view.*
-import nl.hva.level4example.model.Reminder
-import nl.hva.level4example.R
+import nl.hva.level5example.model.Reminder
+import nl.hva.level5example.R
 
 
 class ReminderAdapter(private val reminders: List<Reminder>) : RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder>()  {

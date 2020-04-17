@@ -1,4 +1,4 @@
-package nl.hva.level4example
+package nl.hva.level5example
 
 import android.app.Activity
 import android.content.Intent
@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 import kotlinx.android.synthetic.main.activity_add_reminder.*
 import kotlinx.android.synthetic.main.content_add_reminder.*
-import nl.hva.level4example.model.Reminder
+import nl.hva.level5example.model.Reminder
 
 const val EXTRA_REMINDER = "EXTRA_REMINDER"
 
