@@ -61,7 +61,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="Start counting"
+        android:text="@string/start_counting"
         app:layout_constraintBottom_toTopOf="@+id/rvReminder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/countBtn"

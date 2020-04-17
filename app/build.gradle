@@ -8,7 +8,7 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        applicationId 'nl.hva.level4example'
+        applicationId 'nl.hva.level5example'
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1

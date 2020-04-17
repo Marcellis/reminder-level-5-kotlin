@@ -3,11 +3,14 @@ package nl.hva.level5example
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +24,7 @@ import kotlinx.coroutines.withContext
 import nl.hva.level5example.adapter.ReminderAdapter
 import nl.hva.level5example.model.Reminder
 import nl.hva.level5example.repositories.ReminderRepository
+import nl.hva.level5example.vm.MainActivityViewModel
 
 const val ADD_REMINDER_REQUEST_CODE = 100
 const val TAG = "MainActivity"
@@ -31,22 +35,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var reminderAdapter: ReminderAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
-    private lateinit var reminderRepository: ReminderRepository
-    private var count: Int = 0
+
+    private val viewModel: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        //count example
         countBtn.setOnClickListener {
-            count++
-            countTxt.text = String.format("Days in  isolation: %d" , count)
+            viewModel.increment()
         }
 
         recyclerView = findViewById(R.id.rvReminder)
-
-        reminderRepository = ReminderRepository(this)
 
         reminders = arrayListOf()
 
@@ -54,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         viewManager = LinearLayoutManager(this)
         createItemTouchHelper().attachToRecyclerView(recyclerView)
 
-        getRemindersFromDatabase()
+        observeViewModel()
 
         recyclerView.apply {
             setHasFixedSize(true)
@@ -67,15 +69,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getRemindersFromDatabase() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val reminders = withContext(Dispatchers.IO) {
-                reminderRepository.getAllReminders()
-            }
+    private fun observeViewModel() {
+        viewModel.reminders.observe(this, Observer { reminders ->
             this@MainActivity.reminders.clear()
             this@MainActivity.reminders.addAll(reminders)
             reminderAdapter.notifyDataSetChanged()
-        }
+        })
+
+
+        // count example
+        viewModel.count.observe(this, Observer{ count ->
+            countTxt.text = String.format("Count: %d" , count)
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -87,19 +92,13 @@ class MainActivity : AppCompatActivity() {
                     data?.let {safeData ->
                         val reminder = safeData.getParcelableExtra<Reminder>(EXTRA_REMINDER)
                         reminder?.let { safeReminder ->
-                            CoroutineScope(Dispatchers.Main).launch {
-                                withContext(Dispatchers.IO) {
-                                    reminderRepository.insertReminder(safeReminder)
-                                }
-                                getRemindersFromDatabase()
-                            }
+                            viewModel.insertReminder(safeReminder)
                         } ?: run {
                             Log.e(TAG, "reminder is null")
                         }
                     } ?: run {
                         Log.e(TAG, "empty intent data received")
                     }
-
                 }
             }
         }
@@ -150,18 +149,9 @@ class MainActivity : AppCompatActivity() {
             // Callback triggered when a user swiped an item.
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-//
                 val reminderToDelete = reminders[position]
 
-
-                CoroutineScope(Dispatchers.Main).launch {
-                    withContext(Dispatchers.IO) {
-                        reminderRepository.deleteReminder(reminderToDelete)
-                    }
-                    getRemindersFromDatabase()
-                }
-
-
+                viewModel.deleteReminder(reminderToDelete)
             }
         }
         return ItemTouchHelper(callback)
