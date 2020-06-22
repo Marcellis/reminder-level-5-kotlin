@@ -12,7 +12,7 @@ abstract class ReminderRoomDatabase : RoomDatabase() {
     abstract fun reminderDao(): ReminderDao
 
     companion object {
-        private const val DB_NAME = "reminderDB"
+        private const val DB_NAME = "reminder_DB"
 
         @Volatile
         private var reminderRoomDatabase : ReminderRoomDatabase? = null
