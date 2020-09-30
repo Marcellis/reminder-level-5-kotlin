@@ -3,24 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/RemindersFragment">
+    app:startDestination="@id/remindersFragment">
 
     <fragment
-        android:id="@+id/RemindersFragment"
-        android:name="nl.hva.level5example.ui.RemindersFragment"
-        android:label="Reminders Fragment"
-        tools:layout="@layout/fragment_reminders">
-
+        android:id="@+id/remindersFragment"
+        android:name="com.example.madlevel5example.RemindersFragment"
+        android:label="fragment_reminders"
+        tools:layout="@layout/fragment_reminders" >
         <action
-            android:id="@+id/action_RemindersFragment_to_AddReminderFragment"
-            app:destination="@id/AddReminderFragment"
-            app:enterAnim="@anim/fragment_open_enter" />
+            android:id="@+id/action_remindersFragment_to_addReminderFragment"
+            app:destination="@id/addReminderFragment" />
     </fragment>
-
     <fragment
-        android:id="@+id/AddReminderFragment"
-        android:name="nl.hva.level5example.ui.AddReminderFragment"
-        android:label="Add Reminder Fragment"
-        tools:layout="@layout/fragment_add_reminder" >
-    </fragment>
+        android:id="@+id/addReminderFragment"
+        android:name="com.example.madlevel5example.AddReminderFragment"
+        android:label="fragment_add_reminder"
+        tools:layout="@layout/fragment_add_reminder" />
 </navigation>

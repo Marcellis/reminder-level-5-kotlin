@@ -1,22 +1,19 @@
-package nl.hva.level5example.vm
+package com.example.madlevel5example
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import com.example.madlevel2example.Reminder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import nl.hva.level5example.model.Reminder
-import nl.hva.level5example.repositories.ReminderRepository
 
 class ReminderViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val reminderRepository: ReminderRepository = ReminderRepository(application.applicationContext)
+    private val ioScope = CoroutineScope(Dispatchers.IO)
+    private val reminderRepository = ReminderRepository(application.applicationContext)
 
     val reminders: LiveData<List<Reminder>> = reminderRepository.getAllReminders()
-
-    private val ioScope = CoroutineScope(Dispatchers.IO)
 
     fun insertReminder(reminder: Reminder) {
         ioScope.launch {
@@ -29,4 +26,5 @@ class ReminderViewModel(application: Application) : AndroidViewModel(application
             reminderRepository.deleteReminder(reminder)
         }
     }
+
 }

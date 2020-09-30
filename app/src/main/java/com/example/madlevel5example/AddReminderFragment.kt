@@ -1,31 +1,33 @@
-package nl.hva.level5example.ui
+package com.example.madlevel5example
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.example.madlevel2example.Reminder
 import kotlinx.android.synthetic.main.fragment_add_reminder.*
-import nl.hva.level5example.R
-import nl.hva.level5example.model.Reminder
-import nl.hva.level5example.vm.ReminderViewModel
 
-//const val BUNDLE_REMINDER_KEY = "bundle_reminder"
 //const val REQ_REMINDER_KEY = "req_reminder"
+//const val BUNDLE_REMINDER_KEY = "bundle_reminder"
 
+/**
+ * A simple [Fragment] subclass as the second destination in the navigation.
+ */
 class AddReminderFragment : Fragment() {
 
     private val viewModel: ReminderViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
+        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_add_reminder, container, false)
     }
 
@@ -38,19 +40,16 @@ class AddReminderFragment : Fragment() {
     }
 
     private fun onAddReminder() {
-        val reminderText = tilReminderText.text.toString()
+        val reminderText = etReminderName.text.toString()
 
         if (reminderText.isNotBlank()) {
-
-            //extra, not mandatory in tutorial
-            hideKeyboard()
-
             //set the data as fragmentResult, we are listening for REQ_REMINDER_KEY in RemindersFragment!
-            //setFragmentResult(REQ_REMINDER_KEY, bundleOf(Pair(BUNDLE_REMINDER_KEY, reminderText)))
+//            setFragmentResult(REQ_REMINDER_KEY, bundleOf(Pair(BUNDLE_REMINDER_KEY, reminderText)))
             viewModel.insertReminder(Reminder(reminderText))
 
 
-            //"pop" the backstack, this means we destroy this fragment and go back to the RemindersFragment
+            //"pop" the backstack, this means we destroy
+            //this fragment and go back to the RemindersFragment
             findNavController().popBackStack()
 
         } else {
@@ -60,21 +59,4 @@ class AddReminderFragment : Fragment() {
             ).show()
         }
     }
-
-    /**
-     * Would be very cool to make this an extension function of the Fragment class! Try it!
-     */
-    private fun hideKeyboard() {
-        val inputMethodManager =
-            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
-        // Check if no view has focus
-        val currentFocusedView = activity?.currentFocus
-
-        currentFocusedView?.let {
-            inputMethodManager.hideSoftInputFromWindow(
-                currentFocusedView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
-        }
-    }
-
 }

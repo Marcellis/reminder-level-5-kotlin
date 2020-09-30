@@ -1,22 +1,25 @@
-package nl.hva.level5example.ui
+package com.example.madlevel5example
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.madlevel2example.Reminder
+import com.example.madlevel2example.ReminderAdapter
 import kotlinx.android.synthetic.main.fragment_reminders.*
-import nl.hva.level5example.R
-import nl.hva.level5example.adapter.ReminderAdapter
-import nl.hva.level5example.model.Reminder
-import nl.hva.level5example.repositories.ReminderRepository
-import nl.hva.level5example.vm.ReminderViewModel
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -25,46 +28,41 @@ class RemindersFragment : Fragment() {
 
 //    private lateinit var reminderRepository: ReminderRepository
 
-    //populate some test data in Reminders list
-    private var reminders: ArrayList<Reminder> = arrayListOf()
-
-    private lateinit var reminderAdapter: ReminderAdapter
-    private lateinit var viewManager: RecyclerView.LayoutManager
+    private val reminders = arrayListOf<Reminder>()
+    private val reminderAdapter = ReminderAdapter(reminders)
 
     private val viewModel: ReminderViewModel by viewModels()
 
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_reminders, container, false)
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initViews()
+
+        observeAddReminderResult()
+
 //        reminderRepository = ReminderRepository(requireContext())
 //        getRemindersFromDatabase()
 
-        initRv()
-        observeAddReminderResult()
+
     }
 
+    private fun initViews() {
+        // Initialize the recycler view with a linear layout manager, adapter
+        rvReminders.layoutManager =
+                LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        rvReminders.adapter = reminderAdapter
+        rvReminders.addItemDecoration(DividerItemDecoration(context,DividerItemDecoration.VERTICAL))
 
-    private fun initRv() {
-
-        reminderAdapter = ReminderAdapter(reminders)
-        viewManager = LinearLayoutManager(activity)
-
-        createItemTouchHelper().attachToRecyclerView(rvReminder)
-
-        rvReminder.apply {
-            setHasFixedSize(true)
-            layoutManager = viewManager
-            adapter = reminderAdapter
-        }
+        createItemTouchHelper().attachToRecyclerView(rvReminders)
     }
 
     private fun observeAddReminderResult() {
@@ -76,33 +74,26 @@ class RemindersFragment : Fragment() {
     }
 
 
-//        private fun observeAddReminderResult() {
-//            setFragmentResultListener(REQ_REMINDER_KEY) { key, bundle ->
-//                bundle.getString(BUNDLE_REMINDER_KEY)?.let {
-//                    val reminder = Reminder(it)
+//    private fun observeAddReminderResult() {
+//        setFragmentResultListener(REQ_REMINDER_KEY) { key, bundle ->
+//            bundle.getString(BUNDLE_REMINDER_KEY)?.let {
+//                val reminder = Reminder(it)
 //
-//                    CoroutineScope(Dispatchers.Main).launch {
-//                        withContext(Dispatchers.IO) {
-//                            reminderRepository.insertReminder(reminder)
-//                        }
-//                        getRemindersFromDatabase()
+////                reminders.add(reminder)
+////                reminderAdapter.notifyDataSetChanged()
+////                reminderRepository.insertReminder(reminder)
+////                getRemindersFromDatabase()
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    withContext(Dispatchers.IO) {
+//                        reminderRepository.insertReminder(reminder)
 //                    }
-//                } ?: Log.e("ReminderFragment", "Request triggered, but empty reminder text!")
+//                    getRemindersFromDatabase()
+//                }
 //
-//            }
-//        }
-
-//    private fun getRemindersFromDatabase() {
-//        CoroutineScope(Dispatchers.Main).launch {
-//            val reminders = withContext(Dispatchers.IO) {
-//                reminderRepository.getAllReminders()
-//            }
-//            this@MainActivity.reminders.clear()
-//            this@MainActivity.reminders.addAll(reminders)
-//            reminderAdapter.notifyDataSetChanged()
+//            } ?: Log.e("ReminderFragment", "Request triggered, but empty reminder text!")
+//
 //        }
 //    }
-
 
     /**
      * Create a touch helper to recognize when a user swipes an item from a recycler view.
@@ -127,14 +118,17 @@ class RemindersFragment : Fragment() {
             // Callback triggered when a user swiped an item.
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
+//                reminders.removeAt(position)
+//                reminderAdapter.notifyDataSetChanged()
                 val reminderToDelete = reminders[position]
-
+//                reminderRepository.deleteReminder(reminderToDelete)
+//                getRemindersFromDatabase()
 //                CoroutineScope(Dispatchers.Main).launch {
 //                    withContext(Dispatchers.IO) {
 //                        reminderRepository.deleteReminder(reminderToDelete)
 //                    }
+//                    getRemindersFromDatabase()
 //                }
-
                 viewModel.deleteReminder(reminderToDelete)
 
 
@@ -143,5 +137,20 @@ class RemindersFragment : Fragment() {
         return ItemTouchHelper(callback)
     }
 
+//    private fun getRemindersFromDatabase() {
+////        val reminders = reminderRepository.getAllReminders()
+////        this@RemindersFragment.reminders.clear()
+////        this@RemindersFragment.reminders.addAll(reminders)
+////        reminderAdapter.notifyDataSetChanged()
+//        CoroutineScope(Dispatchers.Main).launch {
+//            val reminders = withContext(Dispatchers.IO) {
+//                reminderRepository.getAllReminders()
+//            }
+//            this@RemindersFragment.reminders.clear()
+//            this@RemindersFragment.reminders.addAll(reminders)
+//            reminderAdapter.notifyDataSetChanged()
+//        }
+//
+//    }
 
 }
