@@ -5,21 +5,27 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.navigation.fragment.NavHostFragment
+import com.example.madlevel5example.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
 
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
-        navController = findNavController(R.id.nav_host_fragment)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
 
-        fab.setOnClickListener {
+        navController = navHostFragment.navController
+
+        binding.fab.setOnClickListener {
             navController.navigate(
                 R.id.action_remindersFragment_to_addReminderFragment
             )
@@ -30,11 +36,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fabToggler() {
-        navController.addOnDestinationChangedListener { _,       destination, _ ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id in arrayOf(R.id.addReminderFragment)) {
-                fab.hide()
+                binding.fab.hide()
             } else {
-                fab.show()
+                binding.fab.show()
             }
         }
     }

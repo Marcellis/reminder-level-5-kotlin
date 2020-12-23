@@ -6,12 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.example.madlevel2example.Reminder
-import kotlinx.android.synthetic.main.fragment_add_reminder.*
+import com.example.madlevel5example.databinding.FragmentAddReminderBinding
 
 //const val REQ_REMINDER_KEY = "req_reminder"
 //const val BUNDLE_REMINDER_KEY = "bundle_reminder"
@@ -21,26 +18,29 @@ import kotlinx.android.synthetic.main.fragment_add_reminder.*
  */
 class AddReminderFragment : Fragment() {
 
+    private var _binding: FragmentAddReminderBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: ReminderViewModel by viewModels()
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_reminder, container, false)
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAddReminderBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        btnAddReminder.setOnClickListener {
+        binding.btnAddReminder.setOnClickListener {
             onAddReminder()
         }
     }
 
     private fun onAddReminder() {
-        val reminderText = etReminderName.text.toString()
+        val reminderText = binding.etReminderName.text.toString()
 
         if (reminderText.isNotBlank()) {
             //set the data as fragmentResult, we are listening for REQ_REMINDER_KEY in RemindersFragment!

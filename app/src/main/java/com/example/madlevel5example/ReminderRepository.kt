@@ -3,9 +3,8 @@ package com.example.madlevel5example
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.madlevel2example.Reminder
 
-public class ReminderRepository(context: Context) {
+class ReminderRepository(context: Context) {
 
     private var reminderDao: ReminderDao
 
